@@ -3,10 +3,10 @@ import axios from 'axios'
 
 const App = () =>{
    const [value, setValue] = useState(null);
-  const [message, setMessage ] = useState(null);
+   const [message, setMessage ] = useState(null);
    const [previousChats, setPreviousChats] = useState([]);
    const [currentTitle, setCurrentTitle] = useState([]);
-
+   const [loading, setLoading] = useState(false);
    const createNewChat = ()=>{
     setMessage(null);
     setValue("");
@@ -45,6 +45,7 @@ const App = () =>{
     };
     console.log("RequestDatta", requestData);
     try {
+      setLoading(true);
         // Make the POST request using Axios
         const response = await axios.post(`https://botbackend-delta.vercel.app/completions`, requestData, {
             headers: {
@@ -58,13 +59,17 @@ const App = () =>{
         // Update the state with the message received from the server
         if (data.choices && data.choices[0]) {
             setMessage(data.choices[0].message);
+            setCurrentTitle(value);
         } else {
             console.error('Unexpected response format:', data);
         }
     } catch (error) {
         // Log the error and provide more information
         console.error('Error making request:', error.response?.data || error.message);
-    }
+    }finally {
+      // Stop loading state
+      setLoading(false);
+  }
 };
 
 useEffect(() => {
@@ -94,31 +99,56 @@ useEffect(() => {
               content: message.content,
           },
       ]);
-
-      // Clear `value` and `message` as the chat has been processed
-      setValue(null);
+      console.log("Clearing the input field after processing chat");
+      setValue('');
       setMessage(null);
   }
 }, [message, value, currentTitle]);
+// useEffect(()=>{
+//     if(!currentTitle && value && message){
+//       setCurrentTitle(value);
+//     }
+//     if(currentTitle && value && message){
+//       setPreviousChats((previousChats) => [
+//                   ...previousChats,
+//                   {
+//                       title: currentTitle,
+//                       role: 'user',
+//                       content: value,
+//                   },
+//                   {
+//                       title: currentTitle,
+//                       role: message.role,
+//                       content: message.content,
+//                   },
+//               ]);
+//     }
+//     setValue('');
+// },[message, currentTitle])
 
-
-
-const currentChat = previousChats.filter(previousChats => previousChats.title === currentTitle);
+const truncateTitle = (title) => {
+  if (title.length > 30) {
+      return title.slice(0, 30) + "...";
+  }
+  return title;
+};
+const currentChat = previousChats.filter((chat) => chat.title === currentTitle);
+//const currentChat = previousChats.filter(previousChats => previousChats.title === currentTitle);
 const uniqueTitles = Array.from(new Set(previousChats.map(previousChats => previousChats.title)));
-console.log(uniqueTitles);
+//console.log(uniqueTitles);
   return (
     <div className="app">
       <section className="side-bar">
         <button onClick={createNewChat}> + New chat</button>
         <ul className='history'>
          {uniqueTitles?.map((uniqueTitle, index) => <li key={index} onClick={()=>handleClick(uniqueTitle)}>
-          {uniqueTitle}
+         {truncateTitle(uniqueTitle)}
          </li>)}
         </ul>
         
       </section>
       <section className='main'> 
-     <h1>Chatgpt</h1>
+     <h1>ChatBot</h1>
       <ul className='feed'>
         {currentChat.map((chatMessage, index) =><li key = {index}>
           <p className="role">
@@ -132,10 +162,30 @@ console.log(uniqueTitles);
       </ul>
       <div className='button-section'>
         <div className="input-container">
-           <input value={value} onChange={(e)=>{setValue(e.target.value)}}/>
-           <div id="submit" onClick={getMessage}>➢</div>
+           <input 
+           placeholder="Message ChatBot..." 
+           value={value} 
+           onChange={(e)=>{setValue(e.target.value)}}
+           onKeyDown={(e) => {
+            if (e.key === "Enter") {
+                // Trigger the send button when Enter is pressed
+                getMessage();
+            }
+        }}
+           />
+           {/* <div id="submit" onClick={getMessage}>➢</div> */}
+           <div id="submit" onClick={getMessage}>
+                            {loading ? (
+                                <div className="loader">
+                                    {/* You can customize the loader */}
+                                    <span>...</span>
+                                </div>
+                            ) : (
+                                "➢"
+                            )}
+                        </div>
         </div>
-        <p className="info">Chatgpt can make mistakes.</p>
+        <p className="info">ChatBot can make mistakes.</p>
       </div>
       </section>
     </div>
