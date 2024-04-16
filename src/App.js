@@ -7,12 +7,21 @@ const App = () =>{
    const [previousChats, setPreviousChats] = useState([]);
    const [currentTitle, setCurrentTitle] = useState("");
    const [loading, setLoading] = useState(false);
+   const [expandedMessages, setExpandedMessages] = useState({});
+
   //  const createNewChat = ()=>{
   //   setMessage(null);
   //   setValue("");
   //   setCurrentTitle(null);
 
   //  }
+  const handleExpandMessage = (index) => {
+    setExpandedMessages((prev) => ({
+        ...prev,
+        [index]: !prev[index],
+    }));
+};
+
   const createNewChat = () => {
     setMessage(null);
     setValue("");
@@ -59,7 +68,7 @@ const App = () =>{
     })),
       
     };
-    console.log("RequestDatta", requestData);
+    //console.log("RequestDatta", requestData);
     try {
       setLoading(true);
         // Make the POST request using Axios
@@ -71,7 +80,7 @@ const App = () =>{
 
         // Get the data from the response
         const data = response.data;
-
+       console.log("Data",data);
         // Update the state with the message received from the server
         if (data.choices && data.choices[0]) {
             setMessage(data.choices[0].message);
@@ -92,8 +101,8 @@ const App = () =>{
 };
 
 useEffect(() => {
-  console.log("Before setting chatTitle");
-  console.log("currentTitle:", currentTitle);
+  // console.log("Before setting chatTitle");
+  // console.log("currentTitle:", currentTitle);
   if (value && message) {
       // let chatTitle;
 
@@ -178,17 +187,42 @@ const uniqueTitles = Array.from(new Set(previousChats.map(previousChats => previ
       </section>
       <section className='main'> 
      <h1>ChatBot</h1>
-      <ul className='feed'>
-        {currentChat.map((chatMessage, index) =><li key = {index}>
-          <p className="role">
-          {chatMessage.role}
+     <ul className="feed">
+    {currentChat.map((chatMessage, index) => {
+        const isExpanded = expandedMessages[index];
+        const content = chatMessage.content;
 
-          </p>
-          <p>
-          {chatMessage.content}
-          </p>
-           </li>)}
-      </ul>
+        let displayedContent = content;
+        let showMoreLink = false;
+
+        // Truncate the message if it's longer than 1000 characters and not expanded
+        if (!isExpanded && content.length > 1000) {
+            displayedContent = content.slice(0, 1000) + "...";
+            showMoreLink = true;
+        }
+
+        return (
+            <li key={index}>
+                <p className="role">{chatMessage.role}</p>
+                <p>
+                    {displayedContent}
+                    {showMoreLink && (
+                        <>
+                            <span style={{color:'gray', fontSize:13,cursor: "pointer"}} onClick={() => handleExpandMessage(index)}>more </span>
+                            {/* <button
+                                onClick={() => handleExpandMessage(index)}
+                                style={{ color: "blue", cursor: "pointer" }}
+                            >
+                                more
+                            </button> */}
+                        </>
+                    )}
+                </p>
+            </li>
+        );
+    })}
+</ul>
+
       <div className='button-section'>
         <div className="input-container">
            <input 
