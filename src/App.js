@@ -5,14 +5,21 @@ const App = () =>{
    const [value, setValue] = useState(null);
    const [message, setMessage ] = useState(null);
    const [previousChats, setPreviousChats] = useState([]);
-   const [currentTitle, setCurrentTitle] = useState([]);
+   const [currentTitle, setCurrentTitle] = useState("");
    const [loading, setLoading] = useState(false);
-   const createNewChat = ()=>{
+  //  const createNewChat = ()=>{
+  //   setMessage(null);
+  //   setValue("");
+  //   setCurrentTitle(null);
+
+  //  }
+  const createNewChat = () => {
     setMessage(null);
     setValue("");
+    // Generate a unique title using the current timestamp for the new chat
+    
     setCurrentTitle(null);
-
-   }
+};
    const handleClick = (uniqueTitle)=>{
       setCurrentTitle(uniqueTitle);
       setMessage(null);
@@ -41,13 +48,22 @@ const App = () =>{
   const getMessage = async () => {
     // Define the data to be sent in the POST request
     const requestData = {
-        message: value
+        message: value,
+      //   previousMessages: previousChats.filter(chat => chat.title === currentTitle).map(chat => ({
+      //     role: chat.role,
+      //     content: chat.content
+      // }))
+      previousMessages: previousChats.map(chat => ({
+        role: chat.role,
+        content: chat.content,
+    })),
+      
     };
     console.log("RequestDatta", requestData);
     try {
       setLoading(true);
         // Make the POST request using Axios
-        const response = await axios.post(`https://botbackend-delta.vercel.app/completions`, requestData, {
+        const response = await axios.post(`http://localhost:3001/completions`, requestData, {
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -59,7 +75,10 @@ const App = () =>{
         // Update the state with the message received from the server
         if (data.choices && data.choices[0]) {
             setMessage(data.choices[0].message);
-            setCurrentTitle(value);
+            //setCurrentTitle(value);
+            if (!currentTitle) {
+              setCurrentTitle(value);
+          }
         } else {
             console.error('Unexpected response format:', data);
         }
@@ -73,18 +92,28 @@ const App = () =>{
 };
 
 useEffect(() => {
-  // Check if there's a new message and if a value has been provided
+  console.log("Before setting chatTitle");
+  console.log("currentTitle:", currentTitle);
   if (value && message) {
+      // let chatTitle;
+
+      // // Set the current title if not already set
+      // if (!currentTitle) {
+      //     setCurrentTitle(value);
+      //     chatTitle = value;
+      // } else {
+      //     chatTitle = currentTitle;
+      // }
       let chatTitle;
 
-      // Set the current title if not already set
-      if (!currentTitle) {
-          setCurrentTitle(value);
-          chatTitle = value;
-      } else {
-          chatTitle = currentTitle;
-      }
-
+        // If `currentTitle` is not set, set it to `value` for the first chat
+        if (!currentTitle) {
+            setCurrentTitle(value);
+            chatTitle = value;
+        } else {
+            chatTitle = currentTitle;
+        }
+       console.log("chatTitle", chatTitle);
       // Add both the user's input and assistant's response to previous chats
       setPreviousChats((previousChats) => [
           ...previousChats,

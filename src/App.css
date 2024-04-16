@@ -1,0 +1,80 @@
+/* App.css */
+
+/* General styles */
+.app {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+  }
+  
+  /* Header styles */
+  .header {
+    text-align: center;
+  }
+  
+  .header h1 {
+    font-size: 24px;
+    margin-bottom: 5px;
+  }
+  
+  .subtitle {
+    font-size: 14px;
+    color: gray;
+  }
+  
+  /* Main chat container */
+  .main {
+    margin-top: 20px;
+  }
+  
+  .chat-container {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  /* Chat message styles */
+  .chat-message {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .chat-icon {
+    font-size: 24px;
+    margin-right: 10px;
+  }
+  
+  .chat-text {
+    font-size: 14px;
+  }
+  
+  /* Chat footer styles */
+  .chat-footer {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  .input-box {
+    flex-grow: 1;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-right: 10px;
+  }
+  
+  .send-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .send-button:hover {
+    background-color: #0056b3;
+  }
+  
