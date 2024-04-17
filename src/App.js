@@ -72,7 +72,7 @@ const App = () =>{
     try {
       setLoading(true);
         // Make the POST request using Axios
-        const response = await axios.post(`http://localhost:3001/completions`, requestData, {
+        const response = await axios.post(`https://botbackend-delta.vercel.app/completions`, requestData, {
             headers: {
                 'Content-Type': 'application/json'
             }
