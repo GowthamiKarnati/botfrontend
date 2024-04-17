@@ -72,7 +72,7 @@ const App = () =>{
     try {
       setLoading(true);
         // Make the POST request using Axios
-        const response = await axios.post(`https://botbackend-delta.vercel.app/completions`, requestData, {
+        const response = await axios.post(`http://localhost:3001/completions`, requestData, {
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -82,15 +82,35 @@ const App = () =>{
         const data = response.data;
        console.log("Data",data);
         // Update the state with the message received from the server
-        if (data.choices && data.choices[0]) {
-            setMessage(data.choices[0].message);
-            //setCurrentTitle(value);
-            if (!currentTitle) {
+        // if (data.choices && data.choices[0]) {
+        //     setMessage(data.choices[0].message);
+        //     //setCurrentTitle(value);
+        //     if (!currentTitle) {
+        //       setCurrentTitle(value);
+        //   }
+        // } else {
+        //     console.error('Unexpected response format:', data);
+        // }
+        if (data.role && data.content) {
+          // Handle the response data with `role` and `content`
+          setMessage({ role: data.role, content: data.content });
+
+          // Set the title if not already set
+          if (!currentTitle) {
               setCurrentTitle(value);
           }
-        } else {
-            console.error('Unexpected response format:', data);
-        }
+      } else if (data.choices && data.choices[0] && data.choices[0].message) {
+          // Handle the response format with choices and message
+          setMessage(data.choices[0].message);
+
+          // Set the title if not already set
+          if (!currentTitle) {
+              setCurrentTitle(value);
+          }
+      } else {
+          // Handle unexpected response format
+          console.error('Unexpected response format:', data);
+      }
     } catch (error) {
         // Log the error and provide more information
         console.error('Error making request:', error.response?.data || error.message);
