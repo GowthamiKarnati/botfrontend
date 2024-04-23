@@ -54,71 +54,292 @@ const App = () =>{
   //     console.log(err);
   //   }
   //  }
-  const getMessage = async () => {
-    // Define the data to be sent in the POST request
-    const requestData = {
-        message: value,
-      //   previousMessages: previousChats.filter(chat => chat.title === currentTitle).map(chat => ({
-      //     role: chat.role,
-      //     content: chat.content
-      // }))
-      previousMessages: previousChats.map(chat => ({
-        role: chat.role,
-        content: chat.content,
-    })),
+//   const getMessage = async () => {
+//     // Define the data to be sent in the POST request
+//     const requestData = {
+//         message: value,
+//       //   previousMessages: previousChats.filter(chat => chat.title === currentTitle).map(chat => ({
+//       //     role: chat.role,
+//       //     content: chat.content
+//       // }))
+//       previousMessages: previousChats.map(chat => ({
+//         role: chat.role,
+//         content: chat.content,
+//     })),
       
-    };
-    //console.log("RequestDatta", requestData);
-    try {
-      setLoading(true);
-        // Make the POST request using Axios
-        const response = await axios.post(`https://botbackend-delta.vercel.app/completions`, requestData, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+//     };
+//     //console.log("RequestDatta", requestData);
+//     try {
+//       setLoading(true);
+//         // Make the POST request using Axios
+//         const response = await axios.post(`http://localhost:3001/completions`, requestData, {
+//             headers: {
+//                 'Content-Type': 'application/json'
+//             }
+//         });
 
-        // Get the data from the response
-        const data = response.data;
-       console.log("Data",data);
-        // Update the state with the message received from the server
-        // if (data.choices && data.choices[0]) {
-        //     setMessage(data.choices[0].message);
-        //     //setCurrentTitle(value);
-        //     if (!currentTitle) {
-        //       setCurrentTitle(value);
-        //   }
-        // } else {
-        //     console.error('Unexpected response format:', data);
-        // }
-        if (data.role && data.content) {
-          // Handle the response data with `role` and `content`
+//         // Get the data from the response
+//         const data = response.data;
+//        console.log("Data",data);
+//         // Update the state with the message received from the server
+//         // if (data.choices && data.choices[0]) {
+//         //     setMessage(data.choices[0].message);
+//         //     //setCurrentTitle(value);
+//         //     if (!currentTitle) {
+//         //       setCurrentTitle(value);
+//         //   }
+//         // } else {
+//         //     console.error('Unexpected response format:', data);
+//         // }
+//         // if (data.role && data.content) {
+//         //   // Handle the response data with `role` and `content`
+//         //   setMessage({ role: data.role, content: data.content });
+//         if (Array.isArray(data)) {
+//           // If the data is an array, assume it's an array of results
+//           setMessage({
+//               role: 'assistant', // You can adjust the role as per your needs
+//               content: data.map(row => JSON.stringify(row)).join('\n'),
+//           });
+//           // Set the title if not already set
+//           if (!currentTitle) {
+//               setCurrentTitle(value);
+//           }
+//       } else if (data.choices && data.choices[0] && data.choices[0].message) {
+//           // Handle the response format with choices and message
+//           setMessage(data.choices[0].message);
+
+//           // Set the title if not already set
+//           if (!currentTitle) {
+//               setCurrentTitle(value);
+//           }
+//       } else {
+//           // Handle unexpected response format
+//           console.error('Unexpected response format:', data);
+//       }
+//     } catch (error) {
+//         // Log the error and provide more information
+//         console.error('Error making request:', error.response?.data || error.message);
+//     }finally {
+//       // Stop loading state
+//       setLoading(false);
+//   }
+// };
+// const getMessage = async () => {
+//   // Define the data to be sent in the POST request
+//   const requestData = {
+//       message: value,
+//       previousMessages: previousChats.map(chat => ({
+//           role: chat.role,
+//           content: chat.content,
+//       })),
+//   };
+
+//   try {
+//       setLoading(true);
+//       // Make the POST request using Axios
+//       const response = await axios.post(`http://localhost:3001/completions`, requestData, {
+//           headers: {
+//               'Content-Type': 'application/json'
+//           }
+//       });
+
+//       // Get the data from the response
+//       const data = response.data;
+      
+// console.log("data", data);
+//       if (data.role && data.content) {
+//           // If the response is in the expected format, handle it
+//           setMessage({ role: data.role, content: data.content });
+
+//           // Set the title if not already set
+//           if (!currentTitle) {
+//               setCurrentTitle(value);
+//           }
+//       } else if (Array.isArray(data)) {
+//           let formattedResults = '';
+            
+//           if (data.length > 0) {
+//               const firstItem = data[0];
+              
+//               // Check if data is user data based on the fields present
+//               if ('id' in firstItem && 'name' in firstItem && 'email' in firstItem && 'age' in firstItem) {
+//                   formattedResults = data
+//                       .map(user => `ID: ${user.id}, Name: ${user.name}, Email: ${user.email}, Age: ${user.age}`)
+//                       .join('\n');
+//               }
+//               // Check if data is order data based on the fields present
+//               else if ('order_id' in firstItem && 'user_id' in firstItem && 'order_date' in firstItem && 'order_amount' in firstItem && 'order_status' in firstItem) {
+//                   formattedResults = data
+//                       .map(order => `Order ID: ${order.order_id}, User ID: ${order.user_id}, Order Date: ${new Date(order.order_date).toLocaleDateString()}, Order Amount: $${order.order_amount}, Order Status: ${order.order_status}`)
+//                       .join('\n');
+//               }
+//           }
+//           setMessage({
+//               role: 'assistant',
+//               content: formattedResults,
+//           });
+
+//           // Set the title if not already set
+//           if (!currentTitle) {
+//               setCurrentTitle(value);
+//           }
+//       } else {
+//           // Handle unexpected response format
+//           console.error('Unexpected response format:', data);
+//       }
+//   } catch (error) {
+//       // Log the error and provide more information
+//       console.error('Error making request:', error.response?.data || error.message);
+//   } finally {
+//       // Stop loading state
+//       setLoading(false);
+//   }
+// };
+// const getMessage = async () => {
+//     // Define the data to be sent in the POST request
+//     const requestData = {
+//         message: value,
+//         previousMessages: previousChats.map(chat => ({
+//             role: chat.role,
+//             content: chat.content,
+//         })),
+//     };
+
+//     try {
+//         setLoading(true);
+//         // Make the POST request using Axios
+//         const response = await axios.post(`http://localhost:3001/completions`, requestData, {
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//         });
+
+//         // Get the data from the response
+//         const data = response.data;
+
+//         console.log("data", data);
+
+//         let formattedResults = '';
+
+//         // Check if the response is an array
+//         if (Array.isArray(data)) {
+//             // Iterate through each item in the data
+//             data.forEach(item => {
+//                 if ('id' in item && 'name' in item && 'email' in item && 'age' in item) {
+//                     // Format user data
+//                     formattedResults += `ID: ${item.id}, Name: ${item.name}, Email: ${item.email}, Age: ${item.age}\n`;
+//                 } else if ('order_id' in item && 'user_id' in item && 'order_date' in item && 'order_amount' in item && 'order_status' in item) {
+//                     // Format order data
+//                     formattedResults += `Order ID: ${item.order_id}, User ID: ${item.user_id}, Order Date: ${new Date(item.order_date).toLocaleDateString()}, Order Amount: $${item.order_amount}, Order Status: ${item.order_status}\n`;
+//                 }
+//             });
+
+//             // Update the message state with the formatted results
+//             setMessage({
+//                 role: 'assistant',
+//                 content: formattedResults,
+//             });
+
+//             // Set the title if not already set
+//             if (!currentTitle) {
+//                 setCurrentTitle(value);
+//             }
+//         } else if (data.role && data.content) {
+//             // If the response is in the expected format, handle it
+//             setMessage({ role: data.role, content: data.content });
+
+//             // Set the title if not already set
+//             if (!currentTitle) {
+//                 setCurrentTitle(value);
+//             }
+//         } else {
+//             console.error('Unexpected response format:', data);
+//         }
+//     } catch (error) {
+//         // Log the error and provide more information
+//         console.error('Error making request:', error.response?.data || error.message);
+//     } finally {
+//         // Stop loading state
+//         setLoading(false);
+//     }
+// };
+const getMessage = async () => {
+  // Define the data to be sent in the POST request
+  const requestData = {
+      message: value,
+      previousMessages: previousChats.map(chat => ({
+          role: chat.role,
+          content: chat.content,
+      })),
+  };
+
+  try {
+      setLoading(true);
+      // Make the POST request using Axios
+      const response = await axios.post(`https://botbackend-delta.vercel.app/completions`, requestData, {
+          headers: {
+              'Content-Type': 'application/json',
+          },
+      });
+
+      // Get the data from the response
+      const data = response.data;
+
+      console.log("data", data);
+
+      let formattedResults = '';
+
+      // Check if the response is an array
+      if (Array.isArray(data)) {
+          // Iterate through each item in the data
+          data.forEach(item => {
+              if ('id' in item && 'name' in item && 'email' in item && 'age' in item) {
+                  // Format user data
+                  formattedResults += `ID: ${item.id}, Name: ${item.name}, Email: ${item.email}, Age: ${item.age}\n`;
+              } else if ('order_id' in item && 'user_id' in item && 'order_date' in item && 'order_amount' in item && 'order_status' in item) {
+                  // Format order data
+                  formattedResults += `Order ID: ${item.order_id}, User ID: ${item.user_id}, Order Date: ${new Date(item.order_date).toLocaleDateString()}, Order Amount: $${item.order_amount}, Order Status: ${item.order_status}\n`;
+              }
+          });
+
+          // Update the message state with the formatted results
+          setMessage({
+              role: 'assistant',
+              content: formattedResults,
+          });
+
+          // Set the title if not already set
+          if (!currentTitle) {
+              setCurrentTitle(value);
+          }
+      } else if (data.role && data.content) {
+          // If the response is in the expected format, handle it
           setMessage({ role: data.role, content: data.content });
 
           // Set the title if not already set
           if (!currentTitle) {
               setCurrentTitle(value);
           }
-      } else if (data.choices && data.choices[0] && data.choices[0].message) {
-          // Handle the response format with choices and message
-          setMessage(data.choices[0].message);
-
-          // Set the title if not already set
-          if (!currentTitle) {
-              setCurrentTitle(value);
-          }
       } else {
-          // Handle unexpected response format
           console.error('Unexpected response format:', data);
       }
-    } catch (error) {
-        // Log the error and provide more information
-        console.error('Error making request:', error.response?.data || error.message);
-    }finally {
+      // Check if the data contains user details
+        const userWithID1 = data.find(user => user.id === 1);
+        if(userWithID1){
+          formattedResults = `User name: ${userWithID1.name}`
+        }
+        else {
+          formattedResults = 'No user found with ID equal to 1';
+      }
+  } catch (error) {
+      // Log the error and provide more information
+      console.error('Error making request:', error.response?.data || error.message);
+  } finally {
       // Stop loading state
       setLoading(false);
   }
 };
+
 
 useEffect(() => {
   // console.log("Before setting chatTitle");
