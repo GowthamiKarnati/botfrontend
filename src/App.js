@@ -292,16 +292,34 @@ const getMessage = async () => {
       // Check if the response is an array
       if (Array.isArray(data)) {
           // Iterate through each item in the data
+          // data.forEach(item => {
+          //     if ('id' in item && 'name' in item && 'email' in item && 'age' in item) {
+          //         // Format user data
+          //         formattedResults += `ID: ${item.id}, Name: ${item.name}, Email: ${item.email}, Age: ${item.age}\n`;
+          //     } else if ('order_id' in item && 'user_id' in item && 'order_date' in item && 'order_amount' in item && 'order_status' in item) {
+          //         // Format order data
+          //         formattedResults += `Order ID: ${item.order_id}, User ID: ${item.user_id}, Order Date: ${new Date(item.order_date).toLocaleDateString()}, Order Amount: $${item.order_amount}, Order Status: ${item.order_status}\n`;
+          //     }
+          // });
+          // data.forEach(item => {
+          //   for (const key in item) {
+          //     formattedResults += `${key}: ${item[key]}\n`;
+          //   }
+          // });
           data.forEach(item => {
-              if ('id' in item && 'name' in item && 'email' in item && 'age' in item) {
-                  // Format user data
-                  formattedResults += `ID: ${item.id}, Name: ${item.name}, Email: ${item.email}, Age: ${item.age}\n`;
-              } else if ('order_id' in item && 'user_id' in item && 'order_date' in item && 'order_amount' in item && 'order_status' in item) {
-                  // Format order data
-                  formattedResults += `Order ID: ${item.order_id}, User ID: ${item.user_id}, Order Date: ${new Date(item.order_date).toLocaleDateString()}, Order Amount: $${item.order_amount}, Order Status: ${item.order_status}\n`;
+            // Check if item represents user data
+            if ('id' in item && 'name' in item && 'email' in item && 'age' in item) {
+              // Format user data
+              formattedResults += `ID: ${item.id}, Name: ${item.name}, Email: ${item.email}, Age: ${item.age}\n`;
+            } else if ('order_id' in item && 'user_id' in item && 'order_date' in item && 'order_amount' in item && 'order_status' in item) {
+              // Format order data
+              formattedResults += `Order ID: ${item.order_id}, User ID: ${item.user_id}, Order Date: ${new Date(item.order_date).toLocaleDateString()}, Order Amount: $${item.order_amount}, Order Status: ${item.order_status}\n`;
+            } else {
+              // If item does not match user or order data format, iterate through its properties
+              for (const key in item) {
+                formattedResults += `${item[key]}\n`;
               }
-          });
-
+            }});
           // Update the message state with the formatted results
           setMessage({
               role: 'assistant',
