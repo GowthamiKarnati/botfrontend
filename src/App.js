@@ -8,6 +8,8 @@ const App = () =>{
    const [currentTitle, setCurrentTitle] = useState("");
    const [loading, setLoading] = useState(false);
    const [expandedMessages, setExpandedMessages] = useState({});
+   const [users, setUsers] = useState([]);
+   const [orders, setOrders] = useState([]);
 
   //  const createNewChat = ()=>{
   //   setMessage(null);
@@ -291,6 +293,7 @@ const getMessage = async () => {
 
       // Check if the response is an array
       if (Array.isArray(data)) {
+        
           // Iterate through each item in the data
           // data.forEach(item => {
           //     if ('id' in item && 'name' in item && 'email' in item && 'age' in item) {
@@ -309,11 +312,35 @@ const getMessage = async () => {
           data.forEach(item => {
             // Check if item represents user data
             if ('id' in item && 'name' in item && 'email' in item && 'age' in item) {
-              // Format user data
-              formattedResults += `ID: ${item.id}, Name: ${item.name}, Email: ${item.email}, Age: ${item.age}\n`;
+              //formattedResults += `ID: ${item.id}, Name: ${item.name}, Email: ${item.email}, Age: ${item.age}\n`;
+              formattedResults = (
+                <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+    <thead>
+        <tr>
+            <th style={{ border: '1px solid #dddddd', padding: '8px', textAlign: 'left', backgroundColor: '#f2f2f2', fontWeight: 'bold' }}>ID</th>
+            <th style={{ border: '1px solid #dddddd', padding: '8px', textAlign: 'left', backgroundColor: '#f2f2f2', fontWeight: 'bold' }}>Name</th>
+            <th style={{ border: '1px solid #dddddd', padding: '8px', textAlign: 'left', backgroundColor: '#f2f2f2', fontWeight: 'bold' }}>Email</th>
+            <th style={{ border: '1px solid #dddddd', padding: '8px', textAlign: 'left', backgroundColor: '#f2f2f2', fontWeight: 'bold' }}>Age</th>
+        </tr>
+    </thead>
+    <tbody>
+        {data.map(item => (
+            <tr key={item.id}>
+                <td style={{ border: '1px solid #dddddd', padding: '8px', textAlign: 'left' }}>{item.id}</td>
+                <td style={{ border: '1px solid #dddddd', padding: '8px', textAlign: 'left' }}>{item.name}</td>
+                <td style={{ border: '1px solid #dddddd', padding: '8px', textAlign: 'left' }}>{item.email}</td>
+                <td style={{ border: '1px solid #dddddd', padding: '8px', textAlign: 'left' }}>{item.age}</td>
+            </tr>
+        ))}
+    </tbody>
+</table>
+
+            );
+            
             } else if ('order_id' in item && 'user_id' in item && 'order_date' in item && 'order_amount' in item && 'order_status' in item) {
               // Format order data
               formattedResults += `Order ID: ${item.order_id}, User ID: ${item.user_id}, Order Date: ${new Date(item.order_date).toLocaleDateString()}, Order Amount: $${item.order_amount}, Order Status: ${item.order_status}\n`;
+             
             } else {
               // If item does not match user or order data format, iterate through its properties
               for (const key in item) {
