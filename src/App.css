@@ -77,4 +77,33 @@
   .send-button:hover {
     background-color: #0056b3;
   }
-  
+  /* styles.css */
+  .table-container {
+    /* Add your desired styles for the table container */
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td {
+    border: 1px solid #dddddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+.table-cell {
+  /* Add your desired styles for table cells */
+  padding: 5px;
+}
